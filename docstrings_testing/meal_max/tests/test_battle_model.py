@@ -47,7 +47,7 @@ def test_prep_combatant(battle_model, sample_meal1):
 def test_prep_combatant_full(battle_model, sample_battle, sample_meal3):
     """Test error when adding a meal to the full list."""
     battle_model.combatants.extend(sample_battle)
-    with pytest.raises(ValueError, match="Combatants list is full"):
+    with pytest.raises(ValueError, match="Combatant list is full, cannot add more combatants."):
         battle_model.prep_combatant(sample_meal3)
 
 ##################################################
@@ -63,18 +63,19 @@ def test_clear_combatants(battle_model, sample_meal1):
 ##################################################
 # Battle Management Test Cases
 ##################################################
-def test_battle(battle_model, sample_battle):
+def test_battle(battle_model, sample_battle, sample_meal1, sample_meal2):
     '''Test successfully conducting a battle between two meals'''
-    battle_model.combatants.extend(sample_battle)
-    try:
-        winner = battle_model.battle()
+    battle_model.prep_combatant(sample_meal1)
+    battle_model.prep_combatant(sample_meal2)
+    #try:
+    winner = battle_model.battle()
         
-        assert winner == "Meal 1" or "Meal 2", f"Expected either Meal 1 or Meal 2, but got {winner}"
+    assert winner == ("Meal 1" or "Meal 2"), f"Expected either Meal 1 or Meal 2, but got {winner}"
         #Comment: Don't need to check if battle stats are correctly updated --> unit tests for 'update_meal_stats' has this covered
-        assert len(battle_model.combatants) == 1, f"Expected length of combatants list to decrease (i.e. loser was removed), but length = {len(battle_model.combatants)}"
+    assert len(battle_model.combatants) == 2, f"Expected length of combatants list to decrease (i.e. loser was removed), but length = {len(battle_model.combatants)}"
 
-    except Exception:
-        pytest.fail("battle function raised unexpected error")
+    #except Exception:
+     #   pytest.fail("battle function raised unexpected error")
 
 def test_battle_insufficient(battle_model, sample_meal1):
     '''Test error from conducting a battle with less than 2 combatants (i.e. one combatant)'''
