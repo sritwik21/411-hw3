@@ -406,7 +406,7 @@ def test_update_meal_stats_deleted_meal(mock_cursor):
 
     # Expect a ValueError when attempting to update a deleted song
     with pytest.raises(ValueError, match="Meal with ID 1 has been deleted"):
-        update_meal_stats(1)
+        update_meal_stats(1, "")
 
     # Ensure that no SQL query for updating play count was executed
     mock_cursor.execute.assert_called_once_with("SELECT deleted FROM meals WHERE id = ?", (1,))
@@ -420,4 +420,4 @@ def test_update_meal_stats_bad_id(mock_cursor):
 
     # Expect a ValueError when attempting to update a deleted song
     with pytest.raises(ValueError, match="Meal with ID 999 not found"):
-        update_meal_stats(999)
+        update_meal_stats(999, "")
