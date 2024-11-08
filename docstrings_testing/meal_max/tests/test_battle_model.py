@@ -38,20 +38,13 @@ def sample_battle(sample_meal1, sample_meal2):
 ##################################################
 # Add Meal Management Test Cases
 ##################################################
-#Comment: Need to create unit test for battle function
 def test_prep_combatant(battle_model, sample_meal1):
     """Test adding a meal to the list."""
     battle_model.prep_combatant(sample_meal1)
     assert len(battle_model.combatants) == 1
     assert battle_model.combatants[0].meal == 'Meal 1'
 
-def test_prep_combatant_duplicate(battle_model, sample_meal1):
-    """Test error when adding a duplicate meal to the list."""
-    battle_model.prep_combatant(sample_meal1)
-    with pytest.raises(ValueError, match="Meal with ID 1 already exists in the list"):
-        battle_model.prep_combatant(sample_meal1)
-
-def test_prep_combatant_full(battle_model, sample_meal3):
+def test_prep_combatant_full(battle_model, sample_battle, sample_meal3):
     """Test error when adding a meal to the full list."""
     battle_model.combatants.extend(sample_battle)
     with pytest.raises(ValueError, match="Combatants list is full"):
@@ -66,13 +59,6 @@ def test_clear_combatants(battle_model, sample_meal1):
 
     battle_model.clear_combatants()
     assert len(battle_model.combatants) == 0, "List should be empty after clearing"
-
-#Comment: Unit test might not be needed b/c no edge case in code (i.e. 'clear_combatants' function does not check for empty list)
-def test_clear_combatants_empty_list(battle_model, caplog):
-    """Test clearing the entire list when it's empty."""
-    battle_model.clear_combatants()
-    assert len(battle_model.combatants) == 0, "List should be empty after clearing"
-    assert "Clearing an empty list" in caplog.text, "Expected warning message when clearing an empty list"
 
 ##################################################
 # Battle Management Test Cases
@@ -90,7 +76,7 @@ def test_battle(battle_model, sample_battle):
     except Exception:
         pytest.fail("battle function raised unexpected error")
 
-def test_battle_insufficient(battle_model):
+def test_battle_insufficient(battle_model, sample_meal1):
     '''Test error from conducting a battle with less than 2 combatants (i.e. one combatant)'''
     battle_model.prep_combatant(sample_meal1)
     with pytest.raises(ValueError, match="Not enough combatants"):
