@@ -79,7 +79,7 @@ def test_battle(battle_model, sample_battle):
 def test_battle_insufficient(battle_model, sample_meal1):
     '''Test error from conducting a battle with less than 2 combatants (i.e. one combatant)'''
     battle_model.prep_combatant(sample_meal1)
-    with pytest.raises(ValueError, match="Not enough combatants"):
+    with pytest.raises(ValueError, match="Two combatants must be prepped for a battle."):
         battle_model.battle()
 ##################################################
 # Meal Retrieval Test Cases
