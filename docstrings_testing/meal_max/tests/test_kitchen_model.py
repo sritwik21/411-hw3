@@ -176,9 +176,9 @@ def test_get_leaderboard(mock_cursor):
     # Simulate that there are multiple meals in the database
     #Comment: Do you need to add win_pct in arguments or does it calculate for you?
     mock_cursor.fetchall.return_value = [
-        (1, "Meal A", "Cuisine A", 1.0, "LOW", 10, 5, False),
-        (2, "Meal B", "Cuisine B", 5.0, "MED", 10, 2, False),
-        (3, "Meal C", "Cuisine C", 10.0, "HIGH", 10, 1, False)
+        (1, "Meal A", "Cuisine A", 1.0, "LOW", 10, 5, 0.5, False),
+        (2, "Meal B", "Cuisine B", 5.0, "MED", 10, 2, 0.2, False),
+        (3, "Meal C", "Cuisine C", 10.0, "HIGH", 10, 1, 0.1, False)
     ]
 
     # Call the get_leaderboard function
