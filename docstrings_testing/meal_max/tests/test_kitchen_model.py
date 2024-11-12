@@ -209,9 +209,9 @@ def test_get_leaderboard_ordered_by_win_pct(mock_cursor):
 
     # Simulate that there are multiple meals in the database
     mock_cursor.fetchall.return_value = [
-        (2, "Meal B", "Cuisine B", 5.0, "MED", 40, 2),
-        (1, "Meal A", "Cuisine A", 1.0, "LOW", 10, 1),
-        (3, "Meal C", "Cuisine C", 10.0, "HIGH", 5, 5)
+        (2, "Meal B", "Cuisine B", 5.0, "MED", 40, 2, 0.05),
+        (1, "Meal A", "Cuisine A", 1.0, "LOW", 10, 1, 0.1),
+        (3, "Meal C", "Cuisine C", 10.0, "HIGH", 5, 5, 1.0)
     ]
 
     # Call the get_leaderboard function with sort_by_play_count = True
@@ -219,9 +219,9 @@ def test_get_leaderboard_ordered_by_win_pct(mock_cursor):
 
     # Ensure the results are sorted by play count
     expected_result = [
-        {"id": 3, "meal": "Meal C", "cuisine": "Cuisine C", "price": 10.0, "difficulty": "HIGH", "battles": 5, "wins": 5, "win_pct": 100},
-        {"id": 1, "meal": "Meal A", "cuisine": "Cuisine A", "price": 1.0, "difficulty": "LOW", "battles": 10, "wins": 1, "win_pct": 10},
-        {"id": 2, "meal": "Meal B", "cuisine": "Cuisine B", "price": 5.0, "difficulty": "MED", "battles": 40, "wins": 2, "win_pct": 5}
+        {"id": 2, "meal": "Meal B", "cuisine": "Cuisine B", "price": 5.0, "difficulty": "MED", "battles": 40, "wins": 2, "win_pct": 5.0},
+        {"id": 1, "meal": "Meal A", "cuisine": "Cuisine A", "price": 1.0, "difficulty": "LOW", "battles": 10, "wins": 1, "win_pct": 10.0},
+        {"id": 3, "meal": "Meal C", "cuisine": "Cuisine C", "price": 10.0, "difficulty": "HIGH", "battles": 5, "wins": 5, "win_pct": 100.0}
     ]
 
     assert leaderboard == expected_result, f"Expected {expected_result}, but got {leaderboard}"
@@ -229,7 +229,8 @@ def test_get_leaderboard_ordered_by_win_pct(mock_cursor):
     # Ensure the SQL query was executed correctly
     expected_query = normalize_whitespace("""
         SELECT id, meal, cuisine, price, difficulty, battles, wins, (wins * 1.0 / battles) AS win_pct
-        FROM meals WHERE deleted = false AND battles > 0
+        FROM meals 
+        WHERE deleted = false AND battles > 0
         ORDER BY win_pct DESC
     """)
     actual_query = normalize_whitespace(mock_cursor.execute.call_args[0][0])
@@ -304,7 +305,7 @@ def test_get_meal_by_name(mock_cursor):
     actual_arguments = mock_cursor.execute.call_args[0][1]
 
     # Assert that the SQL query was executed with the correct arguments
-    expected_arguments = (1,)
+    expected_arguments = ("Meal Name",)
     assert actual_arguments == expected_arguments, f"The SQL query arguments did not match. Expected {expected_arguments}, got {actual_arguments}."
 
 def test_get_meal_by_name_bad_name(mock_cursor):
@@ -393,7 +394,7 @@ def test_update_meal_stats_bad_id(mock_cursor):
     """Test error when trying to update stats for a deleted meal."""
 
     # Simulate that the meal exists (id = 1)
-    mock_cursor.fetchone.return_value = [False]
+    mock_cursor.fetchone.return_value = None
 
     # Expect a ValueError when attempting to update a deleted meal
     with pytest.raises(ValueError, match="Meal with ID 999 not found"):

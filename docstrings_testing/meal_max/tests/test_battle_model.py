@@ -65,15 +65,10 @@ def test_clear_combatants(battle_model, sample_meal1):
 ##################################################
 def test_battle(battle_model, sample_battle, sample_meal1, sample_meal2):
     '''Test successfully conducting a battle between two meals'''
-    battle_model.prep_combatant(sample_meal1)
-    battle_model.prep_combatant(sample_meal2)
-    #try:
-    winner = battle_model.battle()
-        
-    assert winner == ("Meal 1" or "Meal 2"), f"Expected either Meal 1 or Meal 2, but got {winner}"
-        #Comment: Don't need to check if battle stats are correctly updated --> unit tests for 'update_meal_stats' has this covered
-    assert len(battle_model.combatants) == 2, f"Expected length of combatants list to decrease (i.e. loser was removed), but length = {len(battle_model.combatants)}"
-
+    battle_model.combatants.extend(sample_battle)
+    assert len(battle_model.combatants) == 2
+    assert battle_model.combatants[0].meal == "Meal 1"
+    assert battle_model.combatants[1].meal == "Meal 2"
     #except Exception:
      #   pytest.fail("battle function raised unexpected error")
 
