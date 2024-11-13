@@ -64,6 +64,7 @@ create_song() {
   curl -s -X POST "$BASE_URL/create-song" -H "Content-Type: application/json" \
     -d "{\"artist\":\"$artist\", \"title\":\"$title\", \"year\":$year, \"genre\":\"$genre\", \"duration\":$duration}" | grep -q '"status": "success"'
 
+  
   if [ $? -eq 0 ]; then
     echo "Song added successfully."
   else
